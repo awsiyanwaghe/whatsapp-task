@@ -1,4 +1,4 @@
-export const HOST = "http://localhost:3000";
+export const HOST = "https://whatsapp-task-qq5k.onrender.comit ";
 
 const AUTH_ROUTE = `${HOST}/api/auth`;
 const MESSAGE_ROUTE = `${HOST}/api/message`;

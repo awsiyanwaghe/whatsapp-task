@@ -20,7 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 
 // MongoDB Local Connection
-const DB = "mongodb://127.0.0.1:27017/chatapp"; // Local DB URL
+const DB = "mongodb+srv://agent99shorts:OaX6pDKmIgkLs4mc@cluster0.jljwznk.mongodb.net/chatapp"; // Local DB URL
 mongoose.connect(DB)
   .then(() => console.log("✅ MongoDB connected locally"))
   .catch(err => console.error("❌ MongoDB connection error:", err));
