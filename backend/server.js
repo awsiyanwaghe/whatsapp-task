@@ -11,7 +11,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 const app = express();
 
 // Middlewares
-app.use(cors({ origin: "http://localhost:5173",methods:['POST','PUT','GET','DELETE', 'PATCH'], credentials: true }));
+app.use(cors({ origin:[ "http://localhost:5173", "https://whatsapp-frontend-3ztf.onrender.com"],methods:['POST','PUT','GET','DELETE', 'PATCH'], credentials: true }));
 
 app.use(express.json());
 
@@ -39,7 +39,7 @@ server.listen(PORT, () => {
 // Socket.IO Setup
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173","https://whatsapp-frontend-3ztf.onrender.com"],
   },
 });
 
