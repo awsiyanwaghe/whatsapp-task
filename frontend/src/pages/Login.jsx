@@ -34,35 +34,45 @@ export default function Login() {
     }
   }, [user.uid, updateSocket]);
 
-  const handleSignInWithPopup = async () => {
-    const provider = new GoogleAuthProvider();
+const handleSignInWithPopup = async () => {
+  const provider = new GoogleAuthProvider();
+  provider.addScope('profile');
+  provider.addScope('email');
+
+  try {
+    // 1. Firebase Authentication
+    const result = await signInWithPopup(auth, provider);
+    const { user: firebaseUser } = result;
+
+    // 2. Prepare user data
+    const userInfo = {
+      userName: firebaseUser.displayName,
+      profileUrl: firebaseUser.photoURL,
+      uid: firebaseUser.uid, // Using main UID
+      email: firebaseUser.email,
+    };
+
+    if (!userInfo.email) throw new Error("No email available");
+
+    // 3. Save to your backend
     try {
-      const result = await signInWithPopup(auth, provider);
-      const data = result.user;
-
-      const userInfo = {
-        userName: data.displayName,
-        profileUrl: data.photoURL,
-        uid: data.providerData[0].uid,
-        email: data.email,
-      };
-
-      if (userInfo.email) {
-        const {
-          data: { user: userData },
-        } = await axios.post(`${LOGIN_USER_ROUTE}`, {
-          userInfo,
-        });
-        userInfo.uid = userData._id;
-      }
-
-      dispatch(setUser(userInfo));
-      navigate("/");
-    } catch (error) {
-      console.error("Failed to sign in with popup:", error);
-      console.error(`Error details: ${error.code}, ${error.message}`);
+      const { data } = await axios.post(LOGIN_USER_ROUTE, { userInfo });
+      userInfo.uid = data.user._id; // Update with DB ID if needed
+    } catch (apiError) {
+      console.error("API Error:", apiError);
+      throw apiError;
     }
-  };
+
+    // 4. Update state and redirect
+    dispatch(setUser(userInfo));
+    navigate("/");
+    
+  } catch (error) {
+    console.error("Login Error:", error);
+    alert(`Login failed: ${error.message}`);
+    // Consider using a toast notification instead
+  }
+};
 
   return (
     <div className="custom-scrollbar relative min-h-screen w-full bg-[#e9ecef]">
